@@ -1,0 +1,84 @@
+.register-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.register-container h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+form {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+form div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+form label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+form input,
+form select {
+  padding: 15px;
+  border: 1px solid gray;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+form button {
+  padding: 15px;
+  border-radius: 5px;
+  border: none;
+  background-color: teal;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+form button:disabled {
+  background-color: #bed9d8;
+  cursor: not-allowed;
+}
+
+form span {
+  color: rgba(255, 0, 0, 0.7);
+  font-size: 14px;
+  text-align: center;
+}
+
+form a {
+  font-size: 14px;
+  color: gray;
+  border-bottom: 1px solid gray;
+  width: max-content;
+  text-align: center;
+  margin-top: 10px;
+}
+
+@media (max-width: 600px) {
+  .register-container {
+    padding: 10px;
+  }
+
+  form {
+    max-width: 100%;
+  }
+}

@@ -1,0 +1,211 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  HR_ADMIN
+}
+
+enum EmployeeStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  ON_LEAVE
+  ON_TRAINING
+  TERMINATED
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum EmploymentType {
+  Permanent
+  Contract
+  Internship
+}
+
+enum DepartmentType {
+  HR
+  IT
+  FINANCE
+  MARKETING
+  SALES
+  OPERATIONS
+  CUSTOMER_SERVICE
+  ENGINEER
+  DESIGN
+  PRODUCTION
+  RESEARCH_DEVELOPMENT
+  LOGISTICS
+  SUPPORT
+  QUALITY_ASSURANCE
+  ADMINISTRATION
+  MARKETING_COMMUNICATION
+  LEGAL
+  FINANCE_ACCOUNTING
+  CUSTOMER
+  TECHNICAL
+  PRODUCTION_MANAGEMENT
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  ON_LEAVE
+}
+
+enum Status {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum NotificationType {
+  INFO
+  WARNING
+  ERROR
+  SUCCESS
+}
+
+model Admin {
+  id              String         @id @default(auto()) @map("_id") @db.ObjectId
+  first_name      String
+  last_name       String
+  email           String         @unique
+  phone_number    String
+  role            AdminRole
+  password        String
+  profile_picture String
+  gender          Gender
+  status          EmployeeStatus
+  created_at      DateTime       @default(now())
+  updated_at      DateTime       @updatedAt
+}
+
+model Staff {
+  id                   String          @id @default(auto()) @map("_id") @db.ObjectId
+  first_name           String
+  last_name            String
+  email                String          @unique
+  phone_number         String
+  gender               Gender
+  date_of_birth        String
+  address              Json?
+  role                 DepartmentType
+  department           Department?     @relation(fields: [department_id], references: [id])
+  department_id        String?         @db.ObjectId
+  employment_type      EmploymentType
+  salary_details       Json?
+  date_of_joining      String
+  reporting_manager_id String?         @db.ObjectId
+  status               EmployeeStatus
+  profile_picture      String
+  documents            Json?
+  created_at           DateTime        @default(now())
+  updated_at           DateTime        @updatedAt
+  Attendance           Attendance[]
+  Leave                Leave[]
+  Payroll              Payroll[]
+  Performance          Performance[]
+  notifications        notifications[]
+}
+
+model Department {
+  id                  String         @id @default(auto()) @map("_id") @db.ObjectId
+  name                DepartmentType
+  description         Json?
+  number_of_employees Int
+  created_at          DateTime       @default(now())
+  updated_at          DateTime       @updatedAt
+  Staff               Staff[]
+}
+
+model Role {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  permissions  Boolean
+  description  Json?
+  salary_range String
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+}
+
+model Attendance {
+  id             String           @id @default(auto()) @map("_id") @db.ObjectId
+  staff          Staff            @relation(fields: [staff_id], references: [id])
+  staff_id       String           @db.ObjectId
+  date           String
+  check_in_time  String
+  check_out_time String
+  hours_worked   Int
+  status         AttendanceStatus
+  remarks        String
+}
+
+model Leave {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  staff      Staff    @relation(fields: [staff_id], references: [id])
+  staff_id   String   @db.ObjectId
+  leave_type String
+  start_date DateTime @default(now())
+  end_date   DateTime
+  total_days Int
+  status     Status
+  reason     String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Payroll {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  staff        Staff    @relation(fields: [staff_id], references: [id])
+  staff_id     String   @db.ObjectId
+  pay_month    String
+  base_salary  Int
+  bonuses      Int
+  deductions   Int
+  net_salary   Int
+  status       Status
+  payment_date DateTime
+  remarks      String
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+}
+
+model Performance {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  staff           Staff    @relation(fields: [staff_id], references: [id])
+  staff_id        String   @db.ObjectId
+  review_period   String
+  ratings         Int
+  recommendations String
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+}
+
+model notifications {
+  id         String           @id @default(auto()) @map("_id") @db.ObjectId
+  staff      Staff            @relation(fields: [staff_id], references: [id])
+  staff_id   String           @db.ObjectId
+  title      String
+  message    String
+  type       NotificationType
+  status     String
+  created_at DateTime         @default(now())
+  updated_at DateTime         @updatedAt
+}
